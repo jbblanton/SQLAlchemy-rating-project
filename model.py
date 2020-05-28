@@ -1,6 +1,7 @@
 """Models for movie ratings app."""
 
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -15,6 +16,8 @@ class User(db.Model):
     email = db.Column(db.String(50), unique = True, nullable = False,)
     password = db.Column(db.String(20), nullable = False,)
 
+    # ratings = a list of Rating objects
+
     def __repr__(self):
         return f'<User user_id={self.user_id}, email={self.email}>'
 
@@ -26,23 +29,29 @@ class Movie(db.Model):
 
     movie_id = db.Column(db.Integer, primary_key = True, 
                         autoincrement = True,)
-    title = db.Column(db.String(), nullable = False,)
+    title = db.Column(db.String(), nullable = False, unique = True,)
     overview = db.Column(db.Text,)
-    release_date = db.Column(db.DateTime(), nullable = False,)
-    poster_path = db.Column(db.String(100),)
+    release_date = db.Column(db.DateTime.now(),)
+    poster_path = db.Column(db.String(),)
+
+    # ratings = a list of Rating objects
 
     def __repr__(self):
-        return f'<Movie movie_id={self.movie_id}, title={self.title}, \
-                 release={self.release_date}>'
+        return f'<Movie movie_id={self.movie_id}, title={self.title}, release={self.release_date}>'
 
 
 class Rating(db.Model):
     """A rating"""
 
+    __tablename__ = "ratings"
+
     rating_id = db.Column(db.Integer, primary_key = True, autoincrement = True,)
     score = db.Column(db.Integer, nullable = False)
-    movie_id = db.Column(db.Integer, foreign_key('movies.movie_id'))
-    user_id = db.Column(db.Integer, foreign_key('users.user_id'))
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+
+    movie = db.relationship('Movie', backref='ratings')
+    user = db.relationship('User', backref='ratings')
 
     def __repr__(self):
         return f'<Rating rating_id={self.rating_id}, score={self.score}>'
