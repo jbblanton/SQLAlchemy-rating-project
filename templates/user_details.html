@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %} User Details {% endblock %}
+
+{% block body %}
+<h1>{{ user.email }}</h1>
+
+<p>
+    >This is where info about this user's ratings will eventually display<
+</p>
+
+<img src="/static/mst3k.jpg" class="ratings">
+<style type="text/css"> 
+.ratings {
+    width: 441px;
+    height: 214px;
+}</style>
+
+{% endblock %}
